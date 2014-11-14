@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 
-module Prop where
+module GraphTraverse where
 
 import qualified Data.Map.Strict as M
 import Data.Text (Text)
@@ -8,8 +8,29 @@ import Data.ByteString (ByteString)
 import Data.Int (Int64)
 import Data.Time (Day, TimeOfDay, UTCTime)
 import Data.Typeable
+import Data.UUID
 
 data G
+data Lab
+
+newtype RelType = RelType { unRelType :: Text }
+
+data Rel = Rel
+    { relId     :: UUID
+    , relProps  :: Props
+    , relType   :: RelType
+    , startNode :: Node
+    , endNode   :: Node
+    }
+
+
+data Node = Node
+    { nodeId        :: UUID
+    , nodeProps     :: Props
+    , relations     :: [Rel]
+    , nodeDegree    :: Int64
+    , labels        :: [Lab]
+    }
 
 data PropVal = PropText Text
              | PropByteString ByteString
