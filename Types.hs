@@ -2,6 +2,7 @@
 
 module Types where
 
+import qualified Data.Map.Strict as M
 import Data.Text (Text)
 import Data.ByteString (ByteString)
 import Data.Int (Int64)
@@ -9,11 +10,14 @@ import Data.Time (Day, TimeOfDay, UTCTime)
 import Data.Typeable
 import Data.UUID
 
+data Traversal
+data BiTraversal
+
 data G = G
     { schema        :: Schema
-    , index         :: Index
+    , index         :: IndexDefinition
     , traversal     :: Traversal
-    , BiTraversal   :: BiTraversal
+    , biTraversal   :: BiTraversal
     }
 
 data Direction = Out
@@ -23,6 +27,8 @@ data Direction = Out
 newtype RelType = RelType { unRelType :: Text }
 
 newtype Lab = Lab { unLab :: Text }
+
+data ConstraintType = Uniqueness
 
 data Rel = Rel
     { relId     :: UUID
@@ -60,11 +66,32 @@ data Props = Props { graph   :: G
                    , props   :: M.Map Text PropVal
                    }
 
+data T = TNode | TRel
+    deriving (Show)
+
+data PropEntry = PropEntry
+    { propEntryEntityType       :: T
+    , propEntryKey              :: Text
+    , propEntryPrevVal          :: PropVal
+    , propEntryVal              :: PropVal
+    }
+
 data IndexState = Online
                 | Populating
 
-data Schema =
+data Schema = Schema
     { schemaIndexState  :: IndexState
     , schemaIndexes     :: [IndexDefinition]
     , schemaConstraints :: [ConstraintDefinition]
+    }
+
+data IndexDefinition = IndexDefinition
+    { indexLabel        :: Lab
+    , isConstraintIndex :: Bool
+    }
+
+data ConstraintDefinition = ConstraintDefinition
+    { constraintLabel       :: Lab
+    , constraintPropKeys    :: [Text]
+    , constraintType        :: ConstraintType
     }

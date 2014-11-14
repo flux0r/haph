@@ -1,5 +1,9 @@
 module Props where
 
+import Types
+import Data.Text
+import qualified Data.Map as M
+
 prop :: Text -> Props -> Maybe PropVal
 prop k ps = M.lookup k (props ps)
  
