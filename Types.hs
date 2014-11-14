@@ -1,8 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 
-module GraphTraverse where
+module Types where
 
-import qualified Data.Map.Strict as M
 import Data.Text (Text)
 import Data.ByteString (ByteString)
 import Data.Int (Int64)
@@ -10,10 +9,20 @@ import Data.Time (Day, TimeOfDay, UTCTime)
 import Data.Typeable
 import Data.UUID
 
-data G
-data Lab
+data G = G
+    { schema        :: Schema
+    , index         :: Index
+    , traversal     :: Traversal
+    , BiTraversal   :: BiTraversal
+    }
+
+data Direction = Out
+               | In
+               | Both
 
 newtype RelType = RelType { unRelType :: Text }
+
+newtype Lab = Lab { unLab :: Text }
 
 data Rel = Rel
     { relId     :: UUID
@@ -51,17 +60,11 @@ data Props = Props { graph   :: G
                    , props   :: M.Map Text PropVal
                    }
 
-prop :: Text -> Props -> Maybe PropVal
-prop k ps = M.lookup k (props ps)
- 
-propDefault :: PropVal -> Text -> Props -> PropVal
-propDefault v k ps = M.findWithDefault v k (props ps)
+data IndexState = Online
+                | Populating
 
-propModify :: Props -> Text -> PropVal -> Props
-propModify ps k v = Props (graph ps) (M.insert k v (props ps))
-
-propRm :: Text -> Props -> Props
-propRm k ps = Props (graph ps) (M.delete k (props ps))
-
-propNames :: Props -> [Text]
-propNames ps = M.keys (props ps)
+data Schema =
+    { schemaIndexState  :: IndexState
+    , schemaIndexes     :: [IndexDefinition]
+    , schemaConstraints :: [ConstraintDefinition]
+    }
