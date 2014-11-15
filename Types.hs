@@ -25,6 +25,7 @@ data Direction = Out
                | Both
 
 newtype RelType = RelType { unRelType :: Text }
+  deriving (Show)
 
 newtype Lab = Lab { unLab :: Text }
 
