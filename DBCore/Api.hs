@@ -11,9 +11,15 @@ import Data.Time (Day, TimeOfDay, UTCTime)
 import Data.Typeable
 import Data.UUID (UUID)
 
+data EntityType = Node
+                | Rel
+                | G
+  deriving (Show, Eq)
+
 data Prop = Prop
     { propKeyId :: UUID
     , propVal   :: PropVal
+    , propSize  :: Int
     }
 
 data PropVal = PropText Text
